@@ -18,10 +18,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class NosiociOsiguranjaController extends AbstractController
 {
     private NosiociOsiguranjaServices $nosiociOsiguranjaServices;
+    private $serializer;
 
     public function __construct(NosiociOsiguranjaServices $nosiociOsiguranjaServices)
     {
         $this->nosiociOsiguranjaServices = $nosiociOsiguranjaServices;
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $this->serializer = new Serializer($normalizers, $encoders);
     }
 
     #[Route('/nosioci', name: 'app_nosioci')]
@@ -59,11 +63,7 @@ class NosiociOsiguranjaController extends AbstractController
     #[Route('/app/store', name: 'app_store', methods:['POST'])]
     public function store(Request $request)
     {
-        $encoders = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-
-        $data = $serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');
+        $data = $this->serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');
 
         $result = $this->nosiociOsiguranjaServices->store($data);
 
