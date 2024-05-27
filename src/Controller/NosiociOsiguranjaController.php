@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\NosiociOsiguranja;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Services\NosiociOsiguranjaServices;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,13 +17,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class NosiociOsiguranjaController extends AbstractController
 {
-    private $em;
-    private $repository;
+    private NosiociOsiguranjaServices $nosiociOsiguranjaServices;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(NosiociOsiguranjaServices $nosiociOsiguranjaServices)
     {
-        $this->em = $em;
-        $this->repository = $this->em->getRepository(NosiociOsiguranja::class);
+        $this->nosiociOsiguranjaServices = $nosiociOsiguranjaServices;
     }
 
     #[Route('/nosioci', name: 'app_nosioci')]
@@ -66,8 +65,8 @@ class NosiociOsiguranjaController extends AbstractController
 
         $data = $serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');
 
-        $this->em->persist($data);  
-        $this->em->flush();
+        $result = $this->nosiociOsiguranjaServices->store($data);
+
         return $this->json($data);
     }
 }
