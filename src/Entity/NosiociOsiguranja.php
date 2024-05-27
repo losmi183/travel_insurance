@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: NosiociOsiguranjaRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class NosiociOsiguranja
 {
     #[ORM\Id]
@@ -63,14 +64,14 @@ class NosiociOsiguranja
         return $this->datum_rodjenja;
     }
 
-    public function getDatumRodjenjaFormated(): ?string
-    {
-        return $this->datum_rodjenja->format('d-m-Y');
-    }
+    // public function getDatumRodjenjaFormated(): ?string
+    // {
+    //     return $this->datum_rodjenja->format('d-m-Y');
+    // }
 
-    public function setDatumRodjenja(\DateTimeInterface $datum_rodjenja): static
+    public function setDatumRodjenja(string $datum_rodjenja): static
     {
-        $this->datum_rodjenja = $datum_rodjenja;
+        $this->datum_rodjenja = $this->stringToDate($datum_rodjenja);
 
         return $this;
     }
@@ -115,30 +116,30 @@ class NosiociOsiguranja
     {
         return $this->datum_putovanja_od;
     }
-    public function getDatumPutovanjaOdFormated(): ?string
-    {
-        return $this->datum_putovanja_od->format('d-m-Y');
-    }
+    // public function getDatumPutovanjaOdFormated(): ?string
+    // {
+    //     return $this->datum_putovanja_od->format('d-m-Y');
+    // }
 
-    public function setDatumPutovanjaOd(\DateTimeInterface $datum_putovanja_od): static
+    public function setDatumPutovanjaOd(?string $datum_putovanja_od): static
     {
-        $this->datum_putovanja_od = $datum_putovanja_od;
+        $this->datum_putovanja_od = $this->stringToDate($datum_putovanja_od);
 
         return $this;
     }
-    public function getDatumPutovanjaDoFormated(): ?string
-    {
-        return $this->datum_putovanja_do->format('d-m-Y');
-    }
+    // public function getDatumPutovanjaDoFormated(): ?string
+    // {
+    //     return $this->datum_putovanja_do->format('d-m-Y');
+    // }
 
     public function getDatumPutovanjaDo(): ?\DateTimeInterface
     {
         return $this->datum_putovanja_do;
     }
 
-    public function setDatumPutovanjaDo(\DateTimeInterface $datum_putovanja_do): static
+    public function setDatumPutovanjaDo(?string $datum_putovanja_do): static
     {
-        $this->datum_putovanja_do = $datum_putovanja_do;
+        $this->datum_putovanja_do = $this->stringToDate($datum_putovanja_do);
 
         return $this;
     }
@@ -159,15 +160,33 @@ class NosiociOsiguranja
     {
         return $this->datum_kreiranja;
     }
-    public function getDatumKreiranjaFormated(): ?string
-    {
-        return $this->datum_kreiranja->format('d-m-Y');
-    }
 
     public function setDatumKreiranja(\DateTimeInterface $datum_kreiranja): static
     {
         $this->datum_kreiranja = $datum_kreiranja;
 
         return $this;
+    }
+
+    #[ORM\PrePersist]
+    public function setDatumKreiranjaValue(): void
+    {
+        $this->datum_kreiranja = new \DateTimeImmutable();
+    }
+
+    /**
+     * @param mixed $date
+     * 
+     * @return \DateTimeInterface|null
+     */
+    private function stringToDate(mixed $date): ?\DateTimeInterface {
+        if (is_string($date)) {
+            try {
+                $date = new \DateTime($date);
+            } catch (\Exception $e) {
+                $date = null;
+            }
+        }
+        return $date;
     }
 }

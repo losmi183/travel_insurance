@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\NosiociOsiguranja;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,24 +39,35 @@ class NosiociOsiguranjaController extends AbstractController
         return new Response($jsonContent, Response::HTTP_OK, [
             'Content-Type' => 'application/json'
         ]);
+        // $data = $this->repository->findAll();
+        // $responseData = array_map(function($item) {
+        //     return [
+        //         'id' => $item->getId(),
+        //         'ime_prezime' => $item->getImePrezime(),
+        //         'datum_rodjenja' => $item->getDatumRodjenjaFormated(),
+        //         'broj_pasosa' => $item->getBrojPasosa(),
+        //         'telefon' => $item->getTelefon(),
+        //         'email' => $item->getEmail(),
+        //         'datum_putovanja_od' => $item->getDatumPutovanjaOdFormated(),
+        //         'datum_putovanja_do' => $item->getDatumPutovanjaDoFormated(),
+        //         'vrsta_polise' => $item->getVrstaPolise(),
+        //         'datum_kreiranja' => $item->getDatumKreiranjaFormated(),
+        //     ];
+        // }, $data);
+        // return $this->json($responseData);
+    }
 
+    #[Route('/app/store', name: 'app_store', methods:['POST'])]
+    public function store(Request $request)
+    {
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
 
+        $data = $serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');
 
-        $data = $this->repository->findAll();
-        $responseData = array_map(function($item) {
-            return [
-                'id' => $item->getId(),
-                'ime_prezime' => $item->getImePrezime(),
-                'datum_rodjenja' => $item->getDatumRodjenjaFormated(),
-                'broj_pasosa' => $item->getBrojPasosa(),
-                'telefon' => $item->getTelefon(),
-                'email' => $item->getEmail(),
-                'datum_putovanja_od' => $item->getDatumPutovanjaOdFormated(),
-                'datum_putovanja_do' => $item->getDatumPutovanjaDoFormated(),
-                'vrsta_polise' => $item->getVrstaPolise(),
-                'datum_kreiranja' => $item->getDatumKreiranjaFormated(),
-            ];
-        }, $data);
-        return $this->json($responseData);
+        $this->em->persist($data);  
+        $this->em->flush();
+        return $this->json($data);
     }
 }
