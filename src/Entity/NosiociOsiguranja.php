@@ -63,6 +63,11 @@ class NosiociOsiguranja
         return $this->datum_rodjenja;
     }
 
+    public function getDatumRodjenjaFormated(): ?string
+    {
+        return $this->datum_rodjenja->format('d-m-Y');
+    }
+
     public function setDatumRodjenja(\DateTimeInterface $datum_rodjenja): static
     {
         $this->datum_rodjenja = $datum_rodjenja;
@@ -110,12 +115,20 @@ class NosiociOsiguranja
     {
         return $this->datum_putovanja_od;
     }
+    public function getDatumPutovanjaOdFormated(): ?string
+    {
+        return $this->datum_putovanja_od->format('d-m-Y');
+    }
 
     public function setDatumPutovanjaOd(\DateTimeInterface $datum_putovanja_od): static
     {
         $this->datum_putovanja_od = $datum_putovanja_od;
 
         return $this;
+    }
+    public function getDatumPutovanjaDoFormated(): ?string
+    {
+        return $this->datum_putovanja_do->format('d-m-Y');
     }
 
     public function getDatumPutovanjaDo(): ?\DateTimeInterface
@@ -145,6 +158,10 @@ class NosiociOsiguranja
     public function getDatumKreiranja(): ?\DateTimeInterface
     {
         return $this->datum_kreiranja;
+    }
+    public function getDatumKreiranjaFormated(): ?string
+    {
+        return $this->datum_kreiranja->format('d-m-Y');
     }
 
     public function setDatumKreiranja(\DateTimeInterface $datum_kreiranja): static
