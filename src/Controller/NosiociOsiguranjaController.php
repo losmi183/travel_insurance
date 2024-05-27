@@ -24,7 +24,7 @@ class NosiociOsiguranjaController extends AbstractController
         $this->repository = $this->em->getRepository(NosiociOsiguranja::class);
     }
 
-    #[Route('/', name: 'app_home')]
+    #[Route('/nosioci', name: 'app_nosioci')]
     public function index(): Response
     {
         $encoders = [new XmlEncoder(), new JsonEncoder()];
@@ -39,7 +39,7 @@ class NosiociOsiguranjaController extends AbstractController
             'Content-Type' => 'application/json'
         ]);
 
-        
+
 
         $data = $this->repository->findAll();
         $responseData = array_map(function($item) {
@@ -57,13 +57,5 @@ class NosiociOsiguranjaController extends AbstractController
             ];
         }, $data);
         return $this->json($responseData);
-    }
-
-    #[Route('/table', name: 'app_table')]
-    public function table(): JsonResponse
-    {
-        return $this->json([
-            'data' => 'tabela'
-        ]);
     }
 }
