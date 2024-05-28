@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class NosiociOsiguranjaController extends AbstractController
@@ -61,9 +62,18 @@ class NosiociOsiguranjaController extends AbstractController
     }
 
     #[Route('/app/store', name: 'app_store', methods:['POST'])]
-    public function store(Request $request)
+    public function store(Request $request, ValidatorInterface $validator)
     {
-        $data = $this->serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');
+        $data = $this->serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');        
+        $errors = $validator->validate($data);
+
+        if (count($errors) > 0) {
+            return $this->json([
+                'errors' => $errors,
+            ]);
+        }
+
+        
 
         $result = $this->nosiociOsiguranjaServices->store($data);
 

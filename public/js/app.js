@@ -81,11 +81,11 @@ function dodajDodatnogOsigurnaikaIPopuni (index, osiguranik) {
 
 const validationRules = {
     'ime_prezime': ['required', { 'max': 255 }],
-    'datum_rodjenja': ['required'],
-    'broj_pasosa': ['required', { 'max': 20 }],
-    'email': ['required', 'email', { 'max': 20 }],
-    'datum_putovanja_od': ['required'],
-    'datum_putovanja_do': ['required']
+    // 'datum_rodjenja': ['required'],
+    // 'broj_pasosa': ['required', { 'max': 20 }],
+    // 'email': ['required', 'email', { 'max': 20 }],
+    // 'datum_putovanja_od': ['required'],
+    // 'datum_putovanja_do': ['required']
 };
 
 function validate(inputId, validationErrors) {

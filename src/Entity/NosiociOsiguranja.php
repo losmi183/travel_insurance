@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\NosiociOsiguranjaRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: NosiociOsiguranjaRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -22,12 +23,14 @@ class NosiociOsiguranja
     private ?\DateTimeInterface $datum_rodjenja = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank]
     private ?string $broj_pasosa = null;
 
     #[ORM\Column(length: 20)]
     private ?string $telefon = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank]
     private ?string $email = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
