@@ -15,7 +15,7 @@ class DodatnaLica
     private ?int $id = null;
 
     #[ORM\ManyToOne]
-    private ?NosiociOsiguranja $nosilac_osiguranja_id = null;
+    private ?NosiociOsiguranja $nosilac_osiguranja = null;
 
     #[ORM\Column(length: 255)]
     private ?string $ime_prezime = null;
@@ -33,12 +33,12 @@ class DodatnaLica
 
     public function getNosilacOsiguranjaId(): ?NosiociOsiguranja
     {
-        return $this->nosilac_osiguranja_id;
+        return $this->nosilac_osiguranja;
     }
 
-    public function setNosilacOsiguranjaId(?NosiociOsiguranja $nosilac_osiguranja_id): static
+    public function setNosilacOsiguranjaId(?NosiociOsiguranja $nosilac_osiguranja): static
     {
-        $this->nosilac_osiguranja_id = $nosilac_osiguranja_id;
+        $this->nosilac_osiguranja = $nosilac_osiguranja;
 
         return $this;
     }

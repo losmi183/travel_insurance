@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Psr\Log\LoggerInterface;
 use App\Entity\NosiociOsiguranja;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\NosiociOsiguranjaServices;
@@ -20,13 +21,15 @@ class NosiociOsiguranjaController extends AbstractController
 {
     private NosiociOsiguranjaServices $nosiociOsiguranjaServices;
     private $serializer;
+    private LoggerInterface $logger;
 
-    public function __construct(NosiociOsiguranjaServices $nosiociOsiguranjaServices)
+    public function __construct(NosiociOsiguranjaServices $nosiociOsiguranjaServices, LoggerInterface $logger)
     {
         $this->nosiociOsiguranjaServices = $nosiociOsiguranjaServices;
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $this->serializer = new Serializer($normalizers, $encoders);
+        $this->logger = $logger;
     }
 
     #[Route('/nosioci', name: 'app_nosioci')]
@@ -59,6 +62,19 @@ class NosiociOsiguranjaController extends AbstractController
         //     ];
         // }, $data);
         // return $this->json($responseData);
+    }
+
+
+    #[Route('/app/paginate')]
+    public function paginate(Request $request): JsonResponse
+    {
+        $params = $request->query->all();        
+        $start = isset($params['start']) ? intval($params['start']) : 0 ;
+        $length = isset($params['length']) ? intval($params['length']) : 0 ;
+
+        $result = $this->nosiociOsiguranjaServices->paginate($start, $length);
+
+        return $this->json($result);
     }
 
     #[Route('/app/store', name: 'app_store', methods:['POST'])]
