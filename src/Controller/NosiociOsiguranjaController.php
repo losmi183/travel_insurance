@@ -68,9 +68,14 @@ class NosiociOsiguranjaController extends AbstractController
         $errors = $validator->validate($data);
 
         if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
+            }
+    
             return $this->json([
-                'errors' => $errors,
-            ]);
+                'errors' => $errorMessages,
+            ], JsonResponse::HTTP_BAD_REQUEST); // 400 status code
         }
 
         

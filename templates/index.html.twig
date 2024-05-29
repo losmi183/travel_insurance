@@ -290,8 +290,18 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    // Obrada greške ako dođe do problema sa AJAX zahtevom
-                    console.error('Greška prilikom slanja na server:', error);
+                    if (xhr.status === 400) {
+                        var errors = xhr.responseJSON.errors;
+                        var errorMessages = [];
+                        for (var field in errors) {
+                            if (errors.hasOwnProperty(field)) {
+                                errorMessages.push(field + ': ' + errors[field]);
+                            }
+                        }
+                        alert('Validation errors: \n' + errorMessages.join('\n'));
+                    } else {
+                        alert('An unexpected error occurred. Please try again later.');
+                    }
                 }
             });
 

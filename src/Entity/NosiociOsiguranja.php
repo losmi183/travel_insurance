@@ -17,13 +17,21 @@ class NosiociOsiguranja
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Ime i prezime je obavezno polje.')]
+    #[Assert\Length(
+        min: 3,
+        max: 20,
+        minMessage: 'Ime i prezime mora imati bar {{ limit  }} karaktera.',
+        maxMessage: 'Ime i prezime može imati najviše {{ limit  }} karaktera.'
+    )]
     private ?string $ime_prezime = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $datum_rodjenja = null;
 
     #[ORM\Column(length: 20)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Broj pasoša je obavezno polje.')]
     private ?string $broj_pasosa = null;
 
     #[ORM\Column(length: 20)]
@@ -31,12 +39,21 @@ class NosiociOsiguranja
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\NotBlank]
+    #[Assert\Email(message: 'Email "{{ value }}" nije validna adresa.')]
+    #[Assert\Length(
+        min: 3,
+        max: 20,
+        minMessage: 'Email mora imati bar {{ limit  }} karaktera.',
+        maxMessage: 'Email može imati najviše {{ limit  }} karaktera.'
+    )]
     private ?string $email = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $datum_putovanja_od = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $datum_putovanja_do = null;
 
     #[ORM\Column(length: 20, nullable: true)]
@@ -67,13 +84,11 @@ class NosiociOsiguranja
         return $this->datum_rodjenja;
     }
 
-    // public function getDatumRodjenjaFormated(): ?string
-    // {
-    //     return $this->datum_rodjenja->format('d-m-Y');
-    // }
-
-    public function setDatumRodjenja(string $datum_rodjenja): static
+    public function setDatumRodjenja(string $datum_rodjenja): ?static
     {
+        if ($datum_rodjenja === null || $datum_rodjenja === '') {
+            return null;
+        }
         $this->datum_rodjenja = $this->stringToDate($datum_rodjenja);
 
         return $this;
@@ -119,13 +134,12 @@ class NosiociOsiguranja
     {
         return $this->datum_putovanja_od;
     }
-    // public function getDatumPutovanjaOdFormated(): ?string
-    // {
-    //     return $this->datum_putovanja_od->format('d-m-Y');
-    // }
 
-    public function setDatumPutovanjaOd(?string $datum_putovanja_od): static
+    public function setDatumPutovanjaOd(?string $datum_putovanja_od): ?static
     {
+        if ($datum_putovanja_od === null || $datum_putovanja_od === '') {
+            return null;
+        }
         $this->datum_putovanja_od = $this->stringToDate($datum_putovanja_od);
 
         return $this;
@@ -140,8 +154,11 @@ class NosiociOsiguranja
         return $this->datum_putovanja_do;
     }
 
-    public function setDatumPutovanjaDo(?string $datum_putovanja_do): static
+    public function setDatumPutovanjaDo(?string $datum_putovanja_do): ?static
     {
+        if ($datum_putovanja_do === null || $datum_putovanja_do === '') {
+            return null;
+        }
         $this->datum_putovanja_do = $this->stringToDate($datum_putovanja_do);
 
         return $this;
