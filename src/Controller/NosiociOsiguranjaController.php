@@ -64,24 +64,34 @@ class NosiociOsiguranjaController extends AbstractController
     #[Route('/app/store', name: 'app_store', methods:['POST'])]
     public function store(Request $request, ValidatorInterface $validator)
     {
-        $data = $this->serializer->deserialize($request->getContent(), NosiociOsiguranja::class, 'json');        
+        // Decode the request content
+        $decodedRequest = json_decode($request->getContent(), true);
+
+        // Extract 'dodatniOsiguranici' before deserialization
+        $dodatniOsiguraniciData = $decodedRequest['dodatniOsiguranici'] ?? [];
+        unset($decodedRequest['dodatniOsiguranici']);
+
+        // Radi se duplo da bi ostalo za primer 2 načina deserializacije
+        // $data = $this->serializer->deserialize($decodedRequest, NosiociOsiguranja::class, 'json');        
+        $data = $this->serializer->deserialize(json_encode($decodedRequest), NosiociOsiguranja::class, 'json');
+
         $errors = $validator->validate($data);
 
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
                 $errorMessages[$error->getPropertyPath()] = $error->getMessage();
-            }
-    
+            }    
             return $this->json([
                 'errors' => $errorMessages,
             ], JsonResponse::HTTP_BAD_REQUEST); // 400 status code
-        }
+        }        
 
-        
+        $result = $this->nosiociOsiguranjaServices->store($data, $dodatniOsiguraniciData);
 
-        $result = $this->nosiociOsiguranjaServices->store($data);
-
-        return $this->json($data);
+        return $this->json([
+            'success' => true,
+            'message' => 'Uspešno upisano u bazu.'
+        ]);
     }
 }
